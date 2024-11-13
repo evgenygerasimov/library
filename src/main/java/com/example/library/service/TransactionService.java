@@ -1,5 +1,6 @@
 package com.example.library.service;
 
+import com.example.library.constants.BookStatus;
 import com.example.library.entity.Author;
 import com.example.library.entity.Book;
 import com.example.library.entity.Reader;
@@ -41,13 +42,10 @@ public class TransactionService {
         transaction.setReader(reader);
         transaction.setOperation(BookStatus.BORROWED.toString());
         transaction.setTransactionDate(LocalDateTime.now());
-
         transactionRepository.save(transaction);
-
         book.setStatus(BookStatus.BORROWED.toString());
         book.getReaders().add(reader);
         bookRepository.save(book);
-
         reader.getBooks().add(book);
         readerRepository.save(reader);
     }
@@ -70,13 +68,10 @@ public class TransactionService {
             returnTransaction.setReader(reader);
             returnTransaction.setOperation(BookStatus.AVAILABLE.toString());
             returnTransaction.setTransactionDate(LocalDateTime.now());
-
             transactionRepository.save(returnTransaction);
-
             book.setStatus(BookStatus.AVAILABLE.toString());
             book.getReaders().remove(reader);
             bookRepository.save(book);
-
             reader.getBooks().remove(book);
             readerRepository.save(reader);
         }
@@ -139,17 +134,6 @@ public class TransactionService {
             }
         }
         return Collections.max(readerMap.entrySet(), Map.Entry.comparingByValue()).getKey();
-    }
-
-    public List<Reader> getSortedReadersByBooksCount() {
-        List<Reader> allReaders = readerRepository.findAll();
-        allReaders.sort(new Comparator<Reader>() {
-            @Override
-            public int compare(Reader o1, Reader o2) {
-                return o2.getBooks().size() - o1.getBooks().size();
-            }
-        });
-        return allReaders;
     }
 }
 

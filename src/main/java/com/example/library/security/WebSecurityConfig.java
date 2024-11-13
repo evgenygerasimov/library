@@ -34,7 +34,10 @@ public class WebSecurityConfig {
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/api/library/**").hasAnyRole("USER")
+                        .requestMatchers("/api/library/transaction-borrow").hasAnyRole("USER")
+                        .requestMatchers("/api/library/transaction-return").hasAnyRole("USER")
+                        .requestMatchers("/api/library/popular-author").hasAnyRole("USER")
+                        .requestMatchers("/api/library/active-reader").hasAnyRole("USER")
                         .anyRequest().permitAll()
                 )
                 .authenticationProvider(authenticationProvider())
@@ -48,7 +51,6 @@ public class WebSecurityConfig {
                         .logoutSuccessUrl("/")
                         .permitAll()
                 );
-
         return http.build();
     }
 

@@ -1,4 +1,4 @@
-package com.example.library.service;
+package com.example.library.constants;
 
 public enum BookStatus {
     AVAILABLE,

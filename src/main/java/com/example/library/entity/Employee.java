@@ -5,11 +5,8 @@ import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -34,7 +31,6 @@ public class Employee implements UserDetails {
     private String password;
     @Column(name = "enabled")
     private int enabled = 1;
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

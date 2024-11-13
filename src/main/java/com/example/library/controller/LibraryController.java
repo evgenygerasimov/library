@@ -15,6 +15,8 @@ public class LibraryController {
 
     @Autowired
     private TransactionService transactionService;
+    @Autowired
+    private ReaderService readerService;
 
     @PostMapping("/transaction-borrow")
     public ResponseEntity<String> transactionBorrow(@RequestParam("bookTitle") String bookTitle, @RequestParam("phoneReader") String phoneReader) {
@@ -42,7 +44,7 @@ public class LibraryController {
 
     @GetMapping("/sorted-all-readers-by-book-count")
     public ResponseEntity<List<Reader>> getSortedReadersByBooksCount() {
-        List<Reader> readers = transactionService.getSortedReadersByBooksCount();
+        List<Reader> readers = readerService.getSortedReadersByBooksCount();
         return ResponseEntity.ok(readers);
     }
 }
