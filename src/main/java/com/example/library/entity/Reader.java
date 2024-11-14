@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "reader")
+@Table(name = "readers")
 @EqualsAndHashCode
 public class Reader {
     @Id

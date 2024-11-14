@@ -32,10 +32,10 @@ public class TransactionService {
         Book book = bookService.findBookByName(titleBook);
         Reader reader = readerService.findByPhone(phone);
         if (reader == null) {
-            throw new RuntimeException("Читатель не найден");
+            throw new RuntimeException("Reader not found");
         }
         if (book.getStatus().equals(BookStatus.BORROWED.toString())) {
-            throw new RuntimeException("Книга уже взята");
+            throw new RuntimeException("Book already borrowed");
         }
         Transaction transaction = new Transaction();
         transaction.setBook(book);
@@ -54,14 +54,14 @@ public class TransactionService {
     public void returnBook(String titleBook, String readerPhone) {
         Book book = bookService.findBookByName(titleBook);
         if (book == null) {
-            throw new RuntimeException("Книга не найдена");
+            throw new RuntimeException("Book not found");
         }
         Reader reader = readerService.findByPhone(readerPhone);
         if (reader == null) {
-            throw new RuntimeException("Читатель не найден");
+            throw new RuntimeException("Reader not found");
         }
         if (!isTransactionExists(book, reader)) {
-            throw new RuntimeException("Транзакция не существует");
+            throw new RuntimeException("Transaction not found");
         } else {
             Transaction returnTransaction = new Transaction();
             returnTransaction.setBook(book);
@@ -105,7 +105,12 @@ public class TransactionService {
                 authorMap.put(author, authorMap.get(author) + 1);
             }
         }
-        return Collections.max(authorMap.entrySet(), Map.Entry.comparingByValue()).getKey();
+        Author mostPopularAuthor = Collections.max(authorMap.entrySet(), Map.Entry.comparingByValue()).getKey();
+        if (mostPopularAuthor == null) {
+            throw new NullPointerException("No authors found");
+        }else {
+            return mostPopularAuthor;
+        }
     }
 
     public List<Transaction> findAllByTakenBetween(String startData, String endDate) {
@@ -133,7 +138,12 @@ public class TransactionService {
                 readerMap.put(transaction.getReader(), readerMap.get(transaction.getReader()) + 1);
             }
         }
-        return Collections.max(readerMap.entrySet(), Map.Entry.comparingByValue()).getKey();
+        Reader mostActiveReaderreader = Collections.max(readerMap.entrySet(), Map.Entry.comparingByValue()).getKey();
+        if (mostActiveReaderreader == null) {
+            throw new NullPointerException("No readers found");
+        } else {
+            return mostActiveReaderreader;
+        }
     }
 }
 
