@@ -14,4 +14,8 @@ public class EmployeeService {
     public void addEmployee(Employee employee) {
         employeeRepository.save(employee);
     }
+
+    public Employee getEmployeeByUsername(String name) {
+        return employeeRepository.findByUsername(name);
+    }
 }

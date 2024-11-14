@@ -5,6 +5,10 @@ import com.example.library.entity.Author;
 import com.example.library.entity.Book;
 import com.example.library.entity.Reader;
 import com.example.library.entity.Transaction;
+import com.example.library.exception.AuthorNotFoundException;
+import com.example.library.exception.BookNotFoundException;
+import com.example.library.exception.ReaderNotFoundException;
+import com.example.library.exception.TransactionException;
 import com.example.library.repository.BookRepository;
 import com.example.library.repository.ReaderRepository;
 import com.example.library.repository.TransactionRepository;
@@ -28,14 +32,18 @@ public class TransactionService {
     @Autowired
     private BookService bookService;
 
+
     public void borrowBook(String titleBook, String phone) {
         Book book = bookService.findBookByName(titleBook);
+        if (book == null) {
+            throw new BookNotFoundException("Book not found");
+        }
         Reader reader = readerService.findByPhone(phone);
         if (reader == null) {
-            throw new RuntimeException("Reader not found");
+            throw new ReaderNotFoundException("Reader not found");
         }
         if (book.getStatus().equals(BookStatus.BORROWED.toString())) {
-            throw new RuntimeException("Book already borrowed");
+            throw new TransactionException("Book already borrowed");
         }
         Transaction transaction = new Transaction();
         transaction.setBook(book);
@@ -54,14 +62,14 @@ public class TransactionService {
     public void returnBook(String titleBook, String readerPhone) {
         Book book = bookService.findBookByName(titleBook);
         if (book == null) {
-            throw new RuntimeException("Book not found");
+            throw new BookNotFoundException("Book not found");
         }
         Reader reader = readerService.findByPhone(readerPhone);
         if (reader == null) {
-            throw new RuntimeException("Reader not found");
+            throw new ReaderNotFoundException("Reader not found");
         }
         if (!isTransactionExists(book, reader)) {
-            throw new RuntimeException("Transaction not found");
+            throw new TransactionException("Transaction not found");
         } else {
             Transaction returnTransaction = new Transaction();
             returnTransaction.setBook(book);
@@ -107,7 +115,7 @@ public class TransactionService {
         }
         Author mostPopularAuthor = Collections.max(authorMap.entrySet(), Map.Entry.comparingByValue()).getKey();
         if (mostPopularAuthor == null) {
-            throw new NullPointerException("Author not found");
+            throw new AuthorNotFoundException("Author not found");
         } else {
             return mostPopularAuthor;
         }
@@ -140,10 +148,12 @@ public class TransactionService {
         }
         Reader mostActiveReaderreader = Collections.max(readerMap.entrySet(), Map.Entry.comparingByValue()).getKey();
         if (mostActiveReaderreader == null) {
-            throw new NullPointerException("Reader not found");
+            throw new ReaderNotFoundException("Reader not found");
         } else {
             return mostActiveReaderreader;
         }
     }
 }
+
+
 

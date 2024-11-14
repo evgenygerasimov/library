@@ -1,10 +1,16 @@
 package com.example.library.controller;
 
 import com.example.library.entity.Author;
+import com.example.library.entity.Employee;
 import com.example.library.entity.Reader;
 import com.example.library.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,25 +23,33 @@ public class LibraryController {
     private TransactionService transactionService;
     @Autowired
     private ReaderService readerService;
+    @Autowired
+    EmployeeService employeeService;
+    @Autowired
+    BookService bookService;
 
     @PostMapping("/transaction-borrow")
-    public ResponseEntity<String> transactionBorrow(@RequestParam("bookTitle") String bookTitle, @RequestParam("phoneReader") String phoneReader) {
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    public ResponseEntity<?> transactionBorrow(@RequestParam("bookTitle") String bookTitle, @RequestParam("phoneReader") String phoneReader) {
         transactionService.borrowBook(bookTitle, phoneReader);
-        return ResponseEntity.ok("Book " + bookTitle + " borrowed successfully");
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     @PostMapping("/transaction-return")
     public ResponseEntity<String> transactionReturn(@RequestParam("bookTitle") String bookTitle, @RequestParam("phoneReader") String phoneReader) {
         transactionService.returnBook(bookTitle, phoneReader);
         return ResponseEntity.ok("Book " + bookTitle + " returned successfully");
     }
 
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping("/popular-author")
     public ResponseEntity<Author> getMostPopularAuthor(@RequestParam("startDate") String startDate, @RequestParam("endDate") String endDate) {
         Author author = transactionService.getMostPopularAuthor(startDate, endDate);
         return ResponseEntity.ok(author);
     }
 
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping("/active-reader")
     public ResponseEntity<Reader> getMostActiveReader() {
         Reader reader = transactionService.getMostActiveReader();
