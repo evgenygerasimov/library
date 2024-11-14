@@ -39,7 +39,7 @@ public class LibraryController {
     @PostMapping("/transaction-return")
     public ResponseEntity<String> transactionReturn(@RequestParam("bookTitle") String bookTitle, @RequestParam("phoneReader") String phoneReader) {
         transactionService.returnBook(bookTitle, phoneReader);
-        return ResponseEntity.ok("Book " + bookTitle + " returned successfully");
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
