@@ -107,8 +107,8 @@ public class TransactionService {
         }
         Author mostPopularAuthor = Collections.max(authorMap.entrySet(), Map.Entry.comparingByValue()).getKey();
         if (mostPopularAuthor == null) {
-            throw new NullPointerException("No authors found");
-        }else {
+            throw new NullPointerException("Author not found");
+        } else {
             return mostPopularAuthor;
         }
     }
@@ -140,7 +140,7 @@ public class TransactionService {
         }
         Reader mostActiveReaderreader = Collections.max(readerMap.entrySet(), Map.Entry.comparingByValue()).getKey();
         if (mostActiveReaderreader == null) {
-            throw new NullPointerException("No readers found");
+            throw new NullPointerException("Reader not found");
         } else {
             return mostActiveReaderreader;
         }
