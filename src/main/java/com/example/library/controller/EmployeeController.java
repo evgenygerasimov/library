@@ -5,6 +5,7 @@ import com.example.library.entity.Role;
 import com.example.library.service.EmployeeService;
 import com.example.library.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,10 +27,10 @@ public class EmployeeController {
     private RoleService roleService;
 
     @GetMapping("/")
-    public ResponseEntity<String> home() {
+    public ResponseEntity<?> home() {
         if (!SecurityContextHolder.getContext().getAuthentication().getName().equals("anonymousUser")) {
-            return ResponseEntity.ok("You are logged in");
-        } else return ResponseEntity.ok("You are not logged in");
+            return ResponseEntity.status(HttpStatus.OK).body("You are logged in as " + SecurityContextHolder.getContext().getAuthentication().getName());
+        } else return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You entered the library without logging in. Please log in to access the library.");
     }
 
     @PostMapping("/login")
