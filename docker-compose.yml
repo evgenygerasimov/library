@@ -9,8 +9,6 @@ services:
       POSTGRES_DB: library
     ports:
       - "5432:5432"
-    networks:
-      - net
   library:
     build: ./
     container_name: library
@@ -18,13 +16,8 @@ services:
     depends_on:
       - postgres
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/library
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/library
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: postgres
     ports:
       - "8080:8080"
-    networks:
-      - net
-networks:
-  net:
-    driver: bridge
