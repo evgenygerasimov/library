@@ -22,13 +22,17 @@ public class Employee implements UserDetails {
 
     @Column(name = "id")
     private long id = ID_GENERATOR.incrementAndGet();
+
     @Id
     @Column(name = "username")
     private String username;
+
     @Column(name = "role")
     private String role;
+
     @Column(name = "password")
     private String password;
+
     @Column(name = "enabled")
     private int enabled = 1;
 
@@ -57,3 +61,4 @@ public class Employee implements UserDetails {
         return true;
     }
 }
+

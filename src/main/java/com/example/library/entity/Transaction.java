@@ -12,13 +12,20 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Table(name = "transactions")
 public class Transaction {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "transaction_date")
     private LocalDateTime transactionDate;
-    private String operation; // "borrow" or "return"
+
+    @Column(name = "operation")
+    private String operation;
+
     @ManyToOne
     private Reader reader;
+
     @ManyToOne
     private Book book;
 }

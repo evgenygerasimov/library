@@ -15,7 +15,9 @@ import com.example.library.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -33,31 +35,42 @@ public class TransactionService {
     private BookService bookService;
 
 
-    public void borrowBook(String titleBook, String phone) {
+    public void borrowBook(String titleBook, String phone, String firstName, String lastName, String gender, String birthDate) {
+
         Book book = bookService.findBookByName(titleBook);
         if (book == null) {
             throw new BookNotFoundException("Book not found");
         }
-        Reader reader = readerService.findByPhone(phone);
-        if (reader == null) {
-            throw new ReaderNotFoundException("Reader not found");
-        }
+
         if (book.getStatus().equals(BookStatus.BORROWED.toString())) {
             throw new TransactionException("Book already borrowed");
         }
+
+        Reader reader = readerService.findByPhone(phone);
+        if (reader == null) {
+            reader = new Reader();
+            reader.setPhone(phone);
+            reader.setFirstName(firstName);
+            reader.setLastName(lastName);
+            reader.setGender(gender);
+            LocalDate birthDateTime = LocalDate.parse(birthDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            reader.setBirthDate(birthDateTime);
+            book.setStatus(BookStatus.BORROWED.toString());
+            bookRepository.save(book);
+        }
+        book.setStatus(BookStatus.BORROWED.toString());
+        bookRepository.save(book);
+
+        reader.getBooks().add(book);
+        readerRepository.save(reader);
+
         Transaction transaction = new Transaction();
         transaction.setBook(book);
         transaction.setReader(reader);
         transaction.setOperation(BookStatus.BORROWED.toString());
         transaction.setTransactionDate(LocalDateTime.now());
         transactionRepository.save(transaction);
-        book.setStatus(BookStatus.BORROWED.toString());
-        book.getReaders().add(reader);
-        bookRepository.save(book);
-        reader.getBooks().add(book);
-        readerRepository.save(reader);
     }
-
 
     public void returnBook(String titleBook, String readerPhone) {
         Book book = bookService.findBookByName(titleBook);
@@ -78,7 +91,6 @@ public class TransactionService {
             returnTransaction.setTransactionDate(LocalDateTime.now());
             transactionRepository.save(returnTransaction);
             book.setStatus(BookStatus.AVAILABLE.toString());
-            book.getReaders().remove(reader);
             bookRepository.save(book);
             reader.getBooks().remove(book);
             readerRepository.save(reader);
@@ -98,29 +110,6 @@ public class TransactionService {
         return false;
     }
 
-    public Author getMostPopularAuthor(String startData, String endDate) {
-        List<Transaction> transactionList = findAllByTakenBetween(startData, endDate);
-        Map<Author, Integer> authorMap = new HashMap<>();
-        List<Author> authorList = new ArrayList<>();
-        int counter = 1;
-        for (Transaction transaction : transactionList) {
-            authorList.addAll(transaction.getBook().getAuthors());
-        }
-        for (Author author : authorList) {
-            if (!authorMap.containsKey(author)) {
-                authorMap.put(author, counter);
-            } else {
-                authorMap.put(author, authorMap.get(author) + 1);
-            }
-        }
-        Author mostPopularAuthor = Collections.max(authorMap.entrySet(), Map.Entry.comparingByValue()).getKey();
-        if (mostPopularAuthor == null) {
-            throw new AuthorNotFoundException("Author not found");
-        } else {
-            return mostPopularAuthor;
-        }
-    }
-
     public List<Transaction> findAllByTakenBetween(String startData, String endDate) {
         LocalDateTime startDateTime = LocalDateTime.parse(startData + "T00:00:00");
         LocalDateTime endDateTime = LocalDateTime.parse(endDate + "T23:59:59");
@@ -133,25 +122,6 @@ public class TransactionService {
             }
         }
         return filteredTransactionList;
-    }
-
-    public Reader getMostActiveReader() {
-        List<Transaction> transactionList = transactionRepository.findAll();
-        Map<Reader, Integer> readerMap = new HashMap<>();
-        int counter = 1;
-        for (Transaction transaction : transactionList) {
-            if (!readerMap.containsKey(transaction.getReader())) {
-                readerMap.put(transaction.getReader(), counter);
-            } else {
-                readerMap.put(transaction.getReader(), readerMap.get(transaction.getReader()) + 1);
-            }
-        }
-        Reader mostActiveReaderreader = Collections.max(readerMap.entrySet(), Map.Entry.comparingByValue()).getKey();
-        if (mostActiveReaderreader == null) {
-            throw new ReaderNotFoundException("Reader not found");
-        } else {
-            return mostActiveReaderreader;
-        }
     }
 }
 
