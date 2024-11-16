@@ -18,13 +18,12 @@ import java.util.concurrent.atomic.AtomicLong;
 @Table(name = "users")
 public class Employee implements UserDetails {
 
-    private static final AtomicLong ID_GENERATOR = new AtomicLong(System.currentTimeMillis());
-
-    @Column(name = "id")
-    private long id = ID_GENERATOR.incrementAndGet();
-
     @Id
-    @Column(name = "username")
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
+    @Column(name = "username", unique = true)
     private String username;
 
     @Column(name = "role")
