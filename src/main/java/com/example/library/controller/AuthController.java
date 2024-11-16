@@ -37,16 +37,10 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ResponseEntity<String> logout(@RequestBody TokenDTO tokenDTO) {
-        Token token = jwtService.getAccessToken(tokenDTO.getAccessToken());
-        if (!token.isValid()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You have already logged out");
+        String response = authService.logout(tokenDTO);
+        if (response.equals("You have already logged out")){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
-        String accessToken = tokenDTO.getAccessToken();
-        try {
-            jwtService.invalidateToken(accessToken);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to logout");
-        }
-        return ResponseEntity.ok("Successfully logged out");
+        return ResponseEntity.ok(response);
     }
 }

@@ -22,10 +22,10 @@ public class AuthService {
     @Autowired
     private JwtService jwtService;
 
-    public TokenDTO login(AuthRequest authRequest){
+    public TokenDTO login(AuthRequest authRequest) {
         TokenDTO tokenDTO = new TokenDTO();
-        for (Token token : jwtService.getTokens()){
-            if (token.getUsername().equals(authRequest.getUsername()) && token.isValid()){
+        for (Token token : jwtService.getTokens()) {
+            if (token.getUsername().equals(authRequest.getUsername()) && token.isValid()) {
                 tokenDTO.setAccessToken(token.getAccessToken());
                 return tokenDTO;
             }
@@ -47,7 +47,7 @@ public class AuthService {
         }
     }
 
-    public TokenDTO refreshToken(TokenDTO tokenDTO){
+    public TokenDTO refreshToken(TokenDTO tokenDTO) {
         String refreshToken = tokenDTO.getRefreshToken();
         String username;
         try {
@@ -60,5 +60,15 @@ public class AuthService {
         newTokenDTO.setAccessToken(newAccessToken);
         newTokenDTO.setRefreshToken(refreshToken);
         return newTokenDTO;
+    }
+
+    public String logout(TokenDTO tokenDTO) {
+        Token token = jwtService.getAccessToken(tokenDTO.getAccessToken());
+        if (!token.isValid()) {
+            return "You have already logged out";
+        }
+        String accessToken = tokenDTO.getAccessToken();
+        jwtService.invalidateToken(accessToken);
+        return "Successfully logged out";
     }
 }
