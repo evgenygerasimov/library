@@ -5,7 +5,6 @@ import com.example.library.entity.Author;
 import com.example.library.entity.Book;
 import com.example.library.entity.Reader;
 import com.example.library.entity.Transaction;
-import com.example.library.exception.AuthorNotFoundException;
 import com.example.library.exception.BookNotFoundException;
 import com.example.library.exception.ReaderNotFoundException;
 import com.example.library.exception.TransactionException;

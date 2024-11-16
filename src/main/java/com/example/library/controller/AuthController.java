@@ -1,18 +1,17 @@
 package com.example.library.controller;
 
+import com.example.library.entity.Token;
 import com.example.library.security.AuthRequest;
 import com.example.library.security.JwtService;
 import com.example.library.security.TokenDTO;
-import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -27,15 +26,14 @@ public class AuthController {
         UsernamePasswordAuthenticationToken authToken =
                 new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword());
         Authentication authentication = authenticationManager.authenticate(authToken);
-
         if (authentication.isAuthenticated()) {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             String accessToken = jwtService.generateAccessToken(userDetails.getUsername());
             String refreshToken = jwtService.generateRefreshToken(userDetails.getUsername());
-
             TokenDTO tokens = new TokenDTO();
             tokens.setAccessToken(accessToken);
             tokens.setRefreshToken(refreshToken);
+            jwtService.saveToken(userDetails.getUsername(), accessToken);
             return tokens;
         } else {
             throw new RuntimeException("Invalid username or password");
@@ -43,20 +41,33 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public Map<String, String> refresh(@RequestBody Map<String, String> body) {
-        String refreshToken = body.get("refreshToken");
+    public TokenDTO refresh(@RequestBody TokenDTO tokenDTO) {
+        String refreshToken = tokenDTO.getRefreshToken();
         String username;
-
         try {
-            Claims claims = jwtService.validateToken(refreshToken);
-            username = claims.getSubject();
+            username = jwtService.extractUserName(refreshToken);
         } catch (Exception e) {
             throw new RuntimeException("Invalid refresh token");
         }
-
         String newAccessToken = jwtService.generateAccessToken(username);
-        Map<String, String> newTokens = new HashMap<>();
-        newTokens.put("accessToken", newAccessToken);
-        return newTokens;
+        TokenDTO newTokenDTO = new TokenDTO();
+        newTokenDTO.setAccessToken(newAccessToken);
+        newTokenDTO.setRefreshToken(refreshToken);
+        return newTokenDTO;
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(@RequestBody TokenDTO tokenDTO) {
+        Token token = jwtService.getToken(tokenDTO.getAccessToken());
+        if (!token.isValid()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You have already logged out");
+        }
+        String accessToken = tokenDTO.getAccessToken();
+        try {
+            jwtService.invalidateToken(accessToken);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to logout");
+        }
+        return ResponseEntity.ok("Successfully logged out");
     }
 }
