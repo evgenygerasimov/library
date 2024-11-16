@@ -1,6 +1,5 @@
 package com.example.library.controller;
 
-import com.example.library.entity.Token;
 import com.example.library.security.AuthRequest;
 import com.example.library.service.AuthService;
 import com.example.library.service.JwtService;
@@ -14,10 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-    @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
-    private JwtService jwtService;
+
     @Autowired
     private AuthService authService;
 
@@ -38,7 +34,7 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<String> logout(@RequestBody TokenDTO tokenDTO) {
         String response = authService.logout(tokenDTO);
-        if (response.equals("You have already logged out")){
+        if (response.equals("You have already logged out")) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
         return ResponseEntity.ok(response);
