@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -79,14 +80,14 @@ public class JwtService {
     }
 
     public void saveToken(String username, String accessToken) {
-        Token token = new Token();
-        token.setUsername(username);
-        token.setAccessToken(accessToken);
-        token.setValid(true);
-        tokenRepository.save(token);
+        Token tokenAcc = new Token();
+        tokenAcc.setUsername(username);
+        tokenAcc.setAccessToken(accessToken);
+        tokenAcc.setValid(true);
+        tokenRepository.save(tokenAcc);
     }
 
-    public Token getToken(String token){
+    public Token getAccessToken(String token){
         Token tokenObj = null;
         if (token.startsWith("Bearer ")){
             tokenObj = tokenRepository.findByAccessToken(token.substring(7)).get();
@@ -94,5 +95,19 @@ public class JwtService {
             tokenObj = tokenRepository.findByAccessToken(token).get();
         }
         return tokenObj;
+    }
+
+    public Token getRefreshToken(String token){
+        Token tokenObj = null;
+        if (token.startsWith("Bearer ")){
+            tokenObj = tokenRepository.findByAccessToken(token.substring(7)).get();
+        } else {
+            tokenObj = tokenRepository.findByAccessToken(token).get();
+        }
+        return tokenObj;
+    }
+
+    public List<Token> getTokens(){
+        return tokenRepository.findAll();
     }
 }

@@ -37,7 +37,7 @@ public class LibraryController {
             , @RequestParam("gender") String gender
             , @RequestParam("birthDate") String birthDate
             ,@RequestHeader("Authorization") String token) {
-        if (!jwtService.getToken(token).isValid()) {
+        if (!jwtService.getAccessToken(token).isValid()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         transactionService.borrowBook(bookTitle, phoneReader, firstName, lastName, gender, birthDate);
@@ -47,7 +47,7 @@ public class LibraryController {
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PostMapping("/transaction-return")
     public ResponseEntity<Book> transactionReturn(@RequestParam("bookTitle") String bookTitle, @RequestParam("phoneReader") String phoneReader, @RequestHeader("Authorization") String token) {
-        if (!jwtService.getToken(token).isValid()) {
+        if (!jwtService.getAccessToken(token).isValid()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         transactionService.returnBook(bookTitle, phoneReader);
@@ -57,7 +57,7 @@ public class LibraryController {
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping("/popular-author")
     public ResponseEntity<Author> getMostPopularAuthor(@RequestParam("startDate") String startDate, @RequestParam("endDate") String endDate, @RequestHeader("Authorization") String token) {
-        if (!jwtService.getToken(token).isValid()) {
+        if (!jwtService.getAccessToken(token).isValid()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         Author author = authorService.getMostPopularAuthor(startDate, endDate);
@@ -67,7 +67,7 @@ public class LibraryController {
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping("/active-reader")
     public ResponseEntity<Reader> getMostActiveReader(@RequestHeader("Authorization") String token) {
-        if (!jwtService.getToken(token).isValid()) {
+        if (!jwtService.getAccessToken(token).isValid()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         Reader reader = readerService.getMostActiveReader();
@@ -83,7 +83,7 @@ public class LibraryController {
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PostMapping("/addNewBook")
     public ResponseEntity<Book> addNewBook(@RequestBody Book book, @RequestHeader("Authorization") String token) {
-        if (!jwtService.getToken(token).isValid()) {
+        if (!jwtService.getAccessToken(token).isValid()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         bookService.addBook(book);
