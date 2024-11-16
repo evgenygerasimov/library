@@ -2,12 +2,10 @@ package com.example.library.controller;
 
 import com.example.library.security.AuthRequest;
 import com.example.library.service.AuthService;
-import com.example.library.service.JwtService;
 import com.example.library.security.TokenDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

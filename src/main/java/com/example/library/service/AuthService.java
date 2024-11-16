@@ -1,12 +1,9 @@
 package com.example.library.service;
 
 import com.example.library.entity.Token;
-import com.example.library.exception.LoginAlreadyExceptionHandler;
 import com.example.library.security.AuthRequest;
 import com.example.library.security.TokenDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
