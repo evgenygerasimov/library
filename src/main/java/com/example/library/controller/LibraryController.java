@@ -3,7 +3,7 @@ package com.example.library.controller;
 import com.example.library.entity.Author;
 import com.example.library.entity.Book;
 import com.example.library.entity.Reader;
-import com.example.library.security.JwtService;
+import com.example.library.service.JwtService;
 import com.example.library.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,8 +21,6 @@ public class LibraryController {
     private TransactionService transactionService;
     @Autowired
     private ReaderService readerService;
-    @Autowired
-    EmployeeService employeeService;
     @Autowired
     BookService bookService;
     @Autowired

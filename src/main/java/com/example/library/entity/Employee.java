@@ -8,7 +8,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Entity
 @Getter

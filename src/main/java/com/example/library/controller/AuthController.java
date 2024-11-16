@@ -2,7 +2,7 @@ package com.example.library.controller;
 
 import com.example.library.entity.Token;
 import com.example.library.security.AuthRequest;
-import com.example.library.security.JwtService;
+import com.example.library.service.JwtService;
 import com.example.library.security.TokenDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
